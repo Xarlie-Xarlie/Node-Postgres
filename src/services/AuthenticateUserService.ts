@@ -16,7 +16,7 @@ interface Response {
 }
 
 export default class AuthenticateUserService {
-  public async execute({ email, password }: Request): Promise<Response> {
+  public async execute({ email, password }: Request): Promise<Response | AppError> {
     const usersRepository = getRepository(User);
 
     const user = await usersRepository.findOne({ where: { email } });

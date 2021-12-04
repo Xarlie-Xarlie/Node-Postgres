@@ -24,7 +24,7 @@ usersRouter.post('/', async (request, response) => {
     return response.json(user);
 
   } catch (err) {
-    return response.status(400).json({ error: err });
+    return response.status(400).json({ Error: err });
   }
 });
 
@@ -32,15 +32,20 @@ const upload = multer({ storage: uploadConfig.Storage });
 
 
 usersRouter.patch('/avatar', ensureAuthentication, upload.single('avatar'), async (request, response) => {
-  const updateUserAvatar = new UpdateUserAvatarService();
+  try {
 
-  const user = await updateUserAvatar.execute({
-    user_id: request.user.id,
-    avatarFilename: request.file.filename,
-  });
+    const updateUserAvatar = new UpdateUserAvatarService();
 
-  user.password = '';
-  return response.json(user);
+    const user = await updateUserAvatar.execute({
+      user_id: request.user.id,
+      avatarFilename: request.file.filename,
+    });
+
+    user.password = '';
+    return response.json(user);
+  } catch (err) {
+    return response.status(err.statusCode).json({ "Error": err.message });
+  }
 })
 
 export default usersRouter;
